@@ -1,16 +1,12 @@
-import 'package:fit_buddy/models/FitBuddyExerciseModel.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-
-import '../components/FitBuddyActivityListItem.dart';
-import '../components/FitBuddyButton.dart';
-import '../components/FitBuddyVisibilitySelector.dart';
-import '../constants/color_constants.dart';
-import '../constants/route_constants.dart';
-import '../models/FitBuddyActivityModel.dart';
-import '../services/firestore/firestore_service.dart';
 import 'colors.dart';
+import 'components/ActivityListItem.dart';
+import 'components/Button.dart';
+import 'components/VisibilitySelector.dart';
+import 'models/ActivityModel.dart';
+import 'models/ExerciseModel.dart';
 
 class CreateWorkoutPage extends StatefulWidget {
   // Create page variables
@@ -63,8 +59,18 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> with TickerProvid
         _selectedTabIndex = _tabController.index;
       });
     });
-    _favoriteExercises = FirestoreService.firestoreService().postService.getFavoriteExercises();
-    _allExercises = FirestoreService.firestoreService().postService.getAllExercises();
+    //_favoriteExercises = FirestoreService.firestoreService().postService.getFavoriteExercises();
+    List<Exercise> favoriteExercises = [Exercise(name: "Pull up", id: "1", isFavorite: true), Exercise(name: "Leg press", id: "2", isFavorite: true)];
+    _favoriteExercises = Stream.value(favoriteExercises);
+
+
+    //_allExercises = FirestoreService.firestoreService().postService.getAllExercises();
+    _allExercises = Future.value([
+      Exercise(name: "Leg curl", id: "3", isFavorite: false),
+      Exercise(name: "bicep curl", id: "4", isFavorite: false)
+    ]);
+
+
   }
 
   @override
@@ -122,7 +128,7 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> with TickerProvid
                           ),
                         ),
                       ),
-                      FitBuddyVisibilitySelector(
+                      VisibilitySelector(
                         value: _dropdownValue,
                         onChanged: (value) {
                           setState(() {
@@ -168,7 +174,7 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> with TickerProvid
                   shrinkWrap: true,
                   itemCount: widget._workout.length,
                   itemBuilder: (context, index) {
-                    return FitBuddyActivityListItem(
+                    return ActivityListItem(
                       exercise: widget._workout[index],
                       onRemove: () {
                         setState(() {
@@ -190,7 +196,7 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> with TickerProvid
               Container(
                 width: double.infinity,
                 height: 50,
-                child: FitBuddyButton(
+                child: MyButton(
                   text: "Add exercise",
                   onPressed: () {
                     _switchView();
@@ -223,7 +229,7 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> with TickerProvid
                     child: TabBar(
                       controller: _tabController,
                       indicator: UnderlineTabIndicator(
-                        borderSide: BorderSide(width: 2.0, color: FitBuddyColorConstants.lAccent),
+                        borderSide: BorderSide(width: 2.0, color: ColorConstants.lAccent),
                         insets: EdgeInsets.symmetric(horizontal: 50.0),
                       ),
                       tabs: [
@@ -231,7 +237,7 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> with TickerProvid
                           "All",
                           style: TextStyle(
                             fontWeight: _selectedTabIndex == 0 ? FontWeight.bold : FontWeight.normal,
-                            color: FitBuddyColorConstants.lAccent,
+                            color: ColorConstants.lAccent,
                             fontSize: 16.0,
                           ),
                         ),
@@ -239,7 +245,7 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> with TickerProvid
                           "Favorites",
                           style: TextStyle(
                             fontWeight: _selectedTabIndex == 1 ? FontWeight.bold : FontWeight.normal,
-                            color: FitBuddyColorConstants.lAccent,
+                            color: ColorConstants.lAccent,
                             fontSize: 16.0,
                           ),
                         ),
@@ -253,7 +259,7 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> with TickerProvid
               TextFormField(
                 decoration: InputDecoration(
                   hintText: "Search",
-                  prefixIcon: Padding(padding: EdgeInsets.only(right: 20) ,child: Icon(Icons.search_rounded, size: 30, color: FitBuddyColorConstants.lOnPrimary,)),
+                  prefixIcon: Padding(padding: EdgeInsets.only(right: 20) ,child: Icon(Icons.search_rounded, size: 30, color: ColorConstants.lOnPrimary,)),
                   prefixIconConstraints: BoxConstraints(minWidth: 30, minHeight: 24),
                   border: InputBorder.none,
                 ),
@@ -314,12 +320,12 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> with TickerProvid
                   // Todo
                 },
                 icon: isFavorite
-                    ? Icon(Icons.star_rounded, color: FitBuddyColorConstants.lAccent)
-                    : Icon(Icons.star_border_rounded, color: FitBuddyColorConstants.lAccent),
+                    ? Icon(Icons.star_rounded, color: ColorConstants.lAccent)
+                    : Icon(Icons.star_border_rounded, color: ColorConstants.lAccent),
               ),
             ],
           ),
-          Divider(thickness: 2, color: FitBuddyColorConstants.lAccent),
+          Divider(thickness: 2, color: ColorConstants.lAccent),
         ],
       ),
     );
